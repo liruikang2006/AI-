@@ -1,6 +1,6 @@
 from coze_coding_dev_sdk.database import Base
 
-from sqlalchemy import BigInteger, Boolean, Column, DateTime, Double, Integer, Numeric, PrimaryKeyConstraint, String, Table, Text, text, func
+from sqlalchemy import BigInteger, Boolean, Column, DateTime, Double, Index, Integer, Numeric, PrimaryKeyConstraint, String, Table, Text, text
 from sqlalchemy.dialects.postgresql import OID
 from typing import Optional
 import datetime
@@ -17,19 +17,54 @@ class HealthCheck(Base):
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True), server_default=text('now()'))
 
 
-class TermMapping(Base):
-    """标准物料映射表：专有名词与序列的映射关系"""
-    __tablename__ = "term_mapping"
+# ============== 大类数据库 - 路由分发树状结构 ==============
+
+class ScrewDatabase(Base):
+    """螺丝数据库 - 专用类"""
+    __tablename__ = "screw_database"
     __table_args__ = (
-        PrimaryKeyConstraint('id', name='term_mapping_pkey'),
+        PrimaryKeyConstraint('id', name='screw_database_pkey'),
+        Index('ix_screw_database_term_name', 'term_name')
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     term_name: Mapped[str] = mapped_column(String(255), nullable=False, comment="专有名词")
-    sequence_id: Mapped[str] = mapped_column(String(100), nullable=False, index=True, comment="序列号")
-    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True, comment="描述信息")
-    created_at: Mapped[datetime.datetime] = mapped_column(DateTime(True), server_default=func.now(), nullable=False, comment="创建时间")
-    updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True), onupdate=func.now(), nullable=True, comment="更新时间")
+    sequence_id: Mapped[str] = mapped_column(String(100), nullable=False, comment="序列号")
+    description: Mapped[Optional[str]] = mapped_column(Text, comment="描述信息")
+    created_at: Mapped[datetime.datetime] = mapped_column(DateTime(True), nullable=False, server_default=text('now()'), comment="创建时间")
+    updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True), comment="更新时间")
+
+
+class CapacitorDatabase(Base):
+    """电容数据库 - 电子元件类"""
+    __tablename__ = "capacitor_database"
+    __table_args__ = (
+        PrimaryKeyConstraint('id', name='capacitor_database_pkey'),
+        Index('ix_capacitor_database_term_name', 'term_name')
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    term_name: Mapped[str] = mapped_column(String(255), nullable=False, comment="专有名词")
+    sequence_id: Mapped[str] = mapped_column(String(100), nullable=False, comment="序列号")
+    description: Mapped[Optional[str]] = mapped_column(Text, comment="描述信息")
+    created_at: Mapped[datetime.datetime] = mapped_column(DateTime(True), nullable=False, server_default=text('now()'), comment="创建时间")
+    updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True), comment="更新时间")
+
+
+class CameraDatabase(Base):
+    """摄像机数据库 - 视频设备类"""
+    __tablename__ = "camera_database"
+    __table_args__ = (
+        PrimaryKeyConstraint('id', name='camera_database_pkey'),
+        Index('ix_camera_database_term_name', 'term_name')
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    term_name: Mapped[str] = mapped_column(String(255), nullable=False, comment="专有名词")
+    sequence_id: Mapped[str] = mapped_column(String(100), nullable=False, comment="序列号")
+    description: Mapped[Optional[str]] = mapped_column(Text, comment="描述信息")
+    created_at: Mapped[datetime.datetime] = mapped_column(DateTime(True), nullable=False, server_default=text('now()'), comment="创建时间")
+    updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True), comment="更新时间")
 
 
 t_pg_stat_statements = Table(
@@ -91,3 +126,18 @@ t_pg_stat_statements_info = Table(
     Column('dealloc', BigInteger),
     Column('stats_reset', DateTime(True))
 )
+
+
+class TermMapping(Base):
+    __tablename__ = 'term_mapping'
+    __table_args__ = (
+        PrimaryKeyConstraint('id', name='term_mapping_pkey'),
+        Index('ix_term_mapping_sequence_id', 'sequence_id')
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    term_name: Mapped[str] = mapped_column(String(255), nullable=False, comment='专有名词')
+    sequence_id: Mapped[str] = mapped_column(String(100), nullable=False, comment='序列号')
+    created_at: Mapped[datetime.datetime] = mapped_column(DateTime(True), nullable=False, server_default=text('now()'), comment='创建时间')
+    description: Mapped[Optional[str]] = mapped_column(Text, comment='描述信息')
+    updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True), comment='更新时间')
