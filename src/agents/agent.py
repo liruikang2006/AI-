@@ -1,6 +1,6 @@
 """
-专有词汇识别智能体
-功能：识别用户意图，提取专有名词及定语，检索标准物料映射库，生成用户需求清单
+专有词汇识别智能体（路由分发版本）
+功能：识别用户意图，路由到正确的大类数据库，提取专有名词及定语，检索映射库，生成用户需求清单
 """
 import os
 import json
@@ -12,7 +12,7 @@ from langgraph.graph.message import add_messages
 from langchain_core.messages import AnyMessage
 from coze_coding_utils.runtime_ctx.context import default_headers
 from storage.memory.memory_saver import get_memory_saver
-from tools.term_mapping_tool import search_term_mapping, add_term_mapping
+from tools.category_search_tool import route_database_category, search_category_database, add_category_record
 
 LLM_CONFIG = "config/agent_llm_config.json"
 
@@ -31,7 +31,7 @@ class AgentState(MessagesState):
 
 def build_agent(ctx=None):
     """
-    构建专有词汇识别智能体
+    构建专有词汇识别智能体（路由分发版本）
     
     Returns:
         Agent 实例
@@ -60,10 +60,11 @@ def build_agent(ctx=None):
         default_headers=default_headers(ctx) if ctx else {}
     )
 
-    # 注册工具
+    # 注册新工具（支持路由分发）
     tools = [
-        search_term_mapping,
-        add_term_mapping
+        route_database_category,
+        search_category_database,
+        add_category_record
     ]
 
     return create_agent(
