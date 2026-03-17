@@ -1,5 +1,5 @@
 """
-大类数据库检索工具 - 支持路由分发树状结构
+电力设备材料检索工具 - 支持路由分发树状结构
 用于根据用户输入路由到正确的大类数据库，并检索专有名词信息
 """
 from langchain.tools import tool, ToolRuntime
@@ -22,22 +22,24 @@ def _safe_get(record: Dict[str, Any], key: str, default: Any = None) -> Any:
 @tool
 def route_database_category(user_input: str, runtime: ToolRuntime = None) -> str:
     """
-    根据用户输入判断需要检索的大类数据库类别
+    根据用户输入判断需要检索的大类数据库类别（电力设备材料）
     
     Args:
         user_input: 用户输入的查询内容
     
     Returns:
-        返回需要检索的大类数据库名称（如：screw_database, capacitor_database, camera_database）
-        如果无法判断，返回"unknown"
+        返回需要检索的大类数据库名称
     """
     ctx = runtime.context if runtime else new_context(method="route_database_category")
     
-    # 大类数据库的关键词映射
+    # 电力设备材料大类数据库的关键词映射
     category_keywords = {
-        "screw_database": ["螺丝", "螺母", "螺栓", "螺柱", "垫圈", "紧固件", "螺纹"],
-        "capacitor_database": ["电容", "电容器", "电感", "电感器", "电阻", "电阻器", "电子元件", "半导体"],
-        "camera_database": ["摄像机", "摄像头", "相机", "监控", "视频", "镜头", "成像"]
+        "pole_database": ["电杆", "杆塔", "水泥杆", "混凝土杆", "钢杆", "钢管杆", "铁塔"],
+        "crossarm_database": ["横担", "铁附件", "抱箍", "垫铁", "连板", "支架", "支撑"],
+        "insulator_database": ["绝缘子", "瓷瓶", "悬式", "柱式", "针式", "绝缘"],
+        "fitting_database": ["金具", "线夹", "挂环", "挂板", "U型", "球头", "碗头", "连接金具"],
+        "guy_wire_database": ["拉线", "钢绞线", "拉线棒", "拉线盘", "拉线板", "拉线护套", "地锚"],
+        "fastener_database": ["螺栓", "螺母", "垫圈", "紧固件", "螺丝", "螺钉"]
     }
     
     user_input_lower = user_input.lower()
@@ -58,7 +60,7 @@ def search_category_database(category: str, term_name: str, runtime: ToolRuntime
     在指定的大类数据库中检索专有名词
     
     Args:
-        category: 大类数据库名称（如：screw_database, capacitor_database, camera_database）
+        category: 大类数据库名称
         term_name: 要检索的专有名词（支持模糊匹配）
     
     Returns:
@@ -70,7 +72,15 @@ def search_category_database(category: str, term_name: str, runtime: ToolRuntime
         client = get_supabase_client()
         
         # 验证类别是否有效
-        valid_categories = ["screw_database", "capacitor_database", "camera_database"]
+        valid_categories = [
+            "pole_database",          # 杆塔数据库
+            "crossarm_database",      # 横担与铁附件数据库
+            "insulator_database",     # 绝缘子数据库
+            "fitting_database",       # 电力金具数据库
+            "guy_wire_database",      # 拉线材料数据库
+            "fastener_database"       # 通用紧固件数据库
+        ]
+        
         if category not in valid_categories:
             return f"错误：未知的数据类别 '{category}'。有效类别为：{', '.join(valid_categories)}"
         
@@ -113,7 +123,7 @@ def add_category_record(category: str, term_name: str, sequence_id: str,
     向指定的大类数据库添加记录
     
     Args:
-        category: 大类数据库名称（如：screw_database, capacitor_database, camera_database）
+        category: 大类数据库名称
         term_name: 专有名词（必填）
         sequence_id: 序列号（必填），格式：域简称-类码-属码-版本/规格-流水号
         synonyms: 同义词（必填）
@@ -129,7 +139,15 @@ def add_category_record(category: str, term_name: str, sequence_id: str,
         client = get_supabase_client()
         
         # 验证类别是否有效
-        valid_categories = ["screw_database", "capacitor_database", "camera_database"]
+        valid_categories = [
+            "pole_database",          # 杆塔数据库
+            "crossarm_database",      # 横担与铁附件数据库
+            "insulator_database",     # 绝缘子数据库
+            "fitting_database",       # 电力金具数据库
+            "guy_wire_database",      # 拉线材料数据库
+            "fastener_database"       # 通用紧固件数据库
+        ]
+        
         if category not in valid_categories:
             return f"错误：未知的数据类别 '{category}'。有效类别为：{', '.join(valid_categories)}"
         

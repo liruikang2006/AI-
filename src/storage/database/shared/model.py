@@ -10,13 +10,13 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 # ============== 大类数据库 - 路由分发树状结构 ==============
 
-class ScrewDatabase(Base):
-    """螺丝数据库 - 专用类"""
-    __tablename__ = "screw_database"
+class PoleDatabase(Base):
+    """杆塔数据库 - 域=ELE, 类码=POL"""
+    __tablename__ = "pole_database"
     __table_args__ = (
-        PrimaryKeyConstraint('id', name='screw_database_pkey'),
-        Index('ix_screw_database_term_name', 'term_name'),
-        Index('ix_screw_database_sequence_id', 'sequence_id')
+        PrimaryKeyConstraint('id', name='pole_database_pkey'),
+        Index('ix_pole_database_term_name', 'term_name'),
+        Index('ix_pole_database_sequence_id', 'sequence_id')
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -30,13 +30,13 @@ class ScrewDatabase(Base):
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True), comment="更新时间")
 
 
-class CapacitorDatabase(Base):
-    """电容数据库 - 电子元件类"""
-    __tablename__ = "capacitor_database"
+class CrossarmDatabase(Base):
+    """横担与铁附件数据库 - 域=ELE, 类码=IRO"""
+    __tablename__ = "crossarm_database"
     __table_args__ = (
-        PrimaryKeyConstraint('id', name='capacitor_database_pkey'),
-        Index('ix_capacitor_database_term_name', 'term_name'),
-        Index('ix_capacitor_database_sequence_id', 'sequence_id')
+        PrimaryKeyConstraint('id', name='crossarm_database_pkey'),
+        Index('ix_crossarm_database_term_name', 'term_name'),
+        Index('ix_crossarm_database_sequence_id', 'sequence_id')
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -50,13 +50,73 @@ class CapacitorDatabase(Base):
     updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True), comment="更新时间")
 
 
-class CameraDatabase(Base):
-    """摄像机数据库 - 视频设备类"""
-    __tablename__ = "camera_database"
+class InsulatorDatabase(Base):
+    """绝缘子数据库 - 域=ELE, 类码=INS"""
+    __tablename__ = "insulator_database"
     __table_args__ = (
-        PrimaryKeyConstraint('id', name='camera_database_pkey'),
-        Index('ix_camera_database_term_name', 'term_name'),
-        Index('ix_camera_database_sequence_id', 'sequence_id')
+        PrimaryKeyConstraint('id', name='insulator_database_pkey'),
+        Index('ix_insulator_database_term_name', 'term_name'),
+        Index('ix_insulator_database_sequence_id', 'sequence_id')
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    term_name: Mapped[str] = mapped_column(Text, nullable=False, comment="名称（必填）")
+    sequence_id: Mapped[str] = mapped_column(Text, nullable=False, comment="序列号（必填），格式：域简称-类码-属码-版本/规格-流水号")
+    synonyms: Mapped[str] = mapped_column(Text, nullable=False, server_default=text("''::text"), comment="同义词（必填）")
+    guide_price: Mapped[Optional[str]] = mapped_column(Text, comment="指导价（非必填）")
+    market_price: Mapped[Optional[str]] = mapped_column(Text, comment="市场价（非必填）")
+    description: Mapped[Optional[str]] = mapped_column(Text, comment="描述信息")
+    created_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True), server_default=text('now()'), comment="创建时间")
+    updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True), comment="更新时间")
+
+
+class FittingDatabase(Base):
+    """电力金具数据库 - 域=ELE, 类码=FIT"""
+    __tablename__ = "fitting_database"
+    __table_args__ = (
+        PrimaryKeyConstraint('id', name='fitting_database_pkey'),
+        Index('ix_fitting_database_term_name', 'term_name'),
+        Index('ix_fitting_database_sequence_id', 'sequence_id')
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    term_name: Mapped[str] = mapped_column(Text, nullable=False, comment="名称（必填）")
+    sequence_id: Mapped[str] = mapped_column(Text, nullable=False, comment="序列号（必填），格式：域简称-类码-属码-版本/规格-流水号")
+    synonyms: Mapped[str] = mapped_column(Text, nullable=False, server_default=text("''::text"), comment="同义词（必填）")
+    guide_price: Mapped[Optional[str]] = mapped_column(Text, comment="指导价（非必填）")
+    market_price: Mapped[Optional[str]] = mapped_column(Text, comment="市场价（非必填）")
+    description: Mapped[Optional[str]] = mapped_column(Text, comment="描述信息")
+    created_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True), server_default=text('now()'), comment="创建时间")
+    updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True), comment="更新时间")
+
+
+class GuyWireDatabase(Base):
+    """拉线材料数据库 - 域=ELE, 类码=GUY"""
+    __tablename__ = "guy_wire_database"
+    __table_args__ = (
+        PrimaryKeyConstraint('id', name='guy_wire_database_pkey'),
+        Index('ix_guy_wire_database_term_name', 'term_name'),
+        Index('ix_guy_wire_database_sequence_id', 'sequence_id')
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    term_name: Mapped[str] = mapped_column(Text, nullable=False, comment="名称（必填）")
+    sequence_id: Mapped[str] = mapped_column(Text, nullable=False, comment="序列号（必填），格式：域简称-类码-属码-版本/规格-流水号")
+    synonyms: Mapped[str] = mapped_column(Text, nullable=False, server_default=text("''::text"), comment="同义词（必填）")
+    guide_price: Mapped[Optional[str]] = mapped_column(Text, comment="指导价（非必填）")
+    market_price: Mapped[Optional[str]] = mapped_column(Text, comment="市场价（非必填）")
+    description: Mapped[Optional[str]] = mapped_column(Text, comment="描述信息")
+    created_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True), server_default=text('now()'), comment="创建时间")
+    updated_at: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(True), comment="更新时间")
+
+
+class FastenerDatabase(Base):
+    """通用紧固件数据库 - 域=ELE, 类码=FAS"""
+    __tablename__ = "fastener_database"
+    __table_args__ = (
+        PrimaryKeyConstraint('id', name='fastener_database_pkey'),
+        Index('ix_fastener_database_term_name', 'term_name'),
+        Index('ix_fastener_database_sequence_id', 'sequence_id')
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -113,10 +173,10 @@ t_pg_stat_statements = Table(
     Column('temp_blks_read', BigInteger),
     Column('temp_blks_written', BigInteger),
     Column('shared_blk_read_time', Double(53)),
-    Column('shared_blk_write_time', Double(53)),
-    Column('local_blk_read_time', Double(53)),
+    Column('shared_blk_write_time', Double(53),
+    Column('local_blk_read_time', Double(53),
     Column('local_blk_write_time', Double(53),
-    Column('temp_blk_read_time', Double(53)),
+    Column('temp_blk_read_time', Double(53),
     Column('temp_blk_write_time', Double(53)),
     Column('wal_records', BigInteger),
     Column('wal_fpi', BigInteger),
